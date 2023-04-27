@@ -10,7 +10,7 @@ import { Role } from '../../roles/entities/role.entity';
 import { UserRole } from './user-role.entity';
 
 interface UserCreationAttrs {
-  login: string;
+  email: string;
   password: string;
 }
 
@@ -25,13 +25,13 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   id: number;
 
-  @ApiProperty({ example: 'user_007', description: 'Login of user' })
+  @ApiProperty({ example: 'user@example.com', description: 'Email of user' })
   @Column({
     type: DataType.STRING,
     unique: true,
     allowNull: false,
   })
-  login: string;
+  email: string;
 
   @ApiProperty({ example: 'Password_007', description: 'Password of user' })
   @Column({

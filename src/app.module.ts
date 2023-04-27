@@ -7,8 +7,6 @@ import { Role } from './modules/roles/entities/role.entity';
 import { UserRole } from './modules/users/entities/user-role.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { RolesModule } from './modules/roles/roles.module';
-import { TechnologiesModule } from './modules/technologies/technologies.module';
-import { Technology } from './modules/technologies/entities/technology.entity';
 
 @Module({
   controllers: [],
@@ -23,13 +21,12 @@ import { Technology } from './modules/technologies/entities/technology.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, UserRole, Technology],
+      models: [User, Role, UserRole],
       autoLoadModels: true,
     }),
     UsersModule,
     AuthModule,
     RolesModule,
-    TechnologiesModule,
   ],
 })
 export class AppModule {}

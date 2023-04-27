@@ -13,8 +13,6 @@ export class UsersController {
 
   @ApiOperation({ summary: 'User creation' })
   @ApiResponse({ status: 200, type: User })
-  @RolesDecorator('ADMIN')
-  @UseGuards(RolesAuthGuard)
   @Post()
   create(@Body() dto: CreateUserDto) {
     return this.usersService.createUser(dto);
@@ -31,19 +29,19 @@ export class UsersController {
 
   @ApiOperation({ summary: 'User by ID' })
   @ApiResponse({ status: 200, type: User })
-  @RolesDecorator('ADMIN')
+  @RolesDecorator('USER')
   @UseGuards(RolesAuthGuard)
   @Get('/:id')
   getById(@Param('id') id: number) {
     return this.usersService.getById(id);
   }
 
-  @ApiOperation({ summary: 'User by login' })
+  @ApiOperation({ summary: 'User by email' })
   @ApiResponse({ status: 200, type: User })
-  @RolesDecorator('ADMIN')
+  @RolesDecorator('USER')
   @UseGuards(RolesAuthGuard)
-  @Get('/:login')
-  getByLogin(@Param('login') login: string) {
-    return this.usersService.getByLogin(login);
+  @Get('/:email')
+  getByEmail(@Param('email') email: string) {
+    return this.usersService.getByEmail(email);
   }
 }

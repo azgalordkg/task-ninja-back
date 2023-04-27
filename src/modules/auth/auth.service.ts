@@ -18,14 +18,14 @@ export class AuthService {
   ) {}
 
   async generateToken(user: User) {
-    const payload = { login: user.login, id: user.id, roles: user.roles };
+    const payload = { email: user.email, id: user.id, roles: user.roles };
     return {
       token: this.jwtService.sign(payload),
     };
   }
 
   private async validateService(userDto: CreateUserDto) {
-    const user = await this.usersService.getByLogin(userDto.login);
+    const user = await this.usersService.getByEmail(userDto.email);
     const passwordEquals = await bcrypt.compare(
       userDto.password,
       user.password,
@@ -43,8 +43,8 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async registration(userDto: CreateUserDto) {
-    const candidate = await this.usersService.getByLogin(userDto.login);
+  async registration(userDto: CreateUserDto, role?: string) {
+    const candidate = await this.usersService.getByEmail(userDto.email);
     if (candidate) {
       throw new HttpException(
         'User is already registered',
@@ -53,11 +53,33 @@ export class AuthService {
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.usersService.createUser({
-      ...userDto,
-      password: hashPassword,
-    });
+    const user = await this.usersService.createUser(
+      {
+        ...userDto,
+        password: hashPassword,
+      },
+      role,
+    );
 
     return this.generateToken(user);
+  }
+
+  async createAdminUser() {
+    const adminRoleName = 'ADMIN';
+
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@admin.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    const adminUser = await this.usersService.getByEmail(adminEmail);
+
+    if (!adminUser) {
+      await this.registration(
+        {
+          email: adminEmail,
+          password: adminPassword,
+        },
+        adminRoleName,
+      );
+    }
   }
 }

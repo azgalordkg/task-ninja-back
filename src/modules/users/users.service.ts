@@ -8,12 +8,12 @@ import { RolesService } from '../roles/roles.service';
 export class UsersService {
   constructor(
     @InjectModel(User) private usersRepository: typeof User,
-    private rolesServices: RolesService,
+    private rolesService: RolesService,
   ) {}
 
-  async createUser(dto: CreateUserDto) {
+  async createUser(dto: CreateUserDto, roleName?: string) {
     const user = await this.usersRepository.findOne({
-      where: { login: dto.login },
+      where: { email: dto.email },
     });
     if (user) {
       throw new HttpException(
@@ -22,7 +22,7 @@ export class UsersService {
       );
     }
     const newUser = await this.usersRepository.create(dto);
-    const role = await this.rolesServices.getRoleByValue('USER');
+    const role = await this.rolesService.getRoleByValue(roleName || 'USER');
     await newUser.$set('roles', [role.id]);
     newUser.roles = [role];
     return newUser;
@@ -41,10 +41,22 @@ export class UsersService {
     });
   }
 
-  async getByLogin(login: string) {
+  async getByEmail(email: string) {
     return await this.usersRepository.findOne({
-      where: { login },
+      where: { email },
       include: { all: true },
     });
+  }
+
+  async createAdminRole() {
+    const adminRoleName = 'ADMIN';
+    const adminRole = await this.rolesService.getRoleByValue(adminRoleName);
+
+    if (!adminRole) {
+      await this.rolesService.createRole({
+        value: adminRoleName,
+        description: 'Administrator role',
+      });
+    }
   }
 }
