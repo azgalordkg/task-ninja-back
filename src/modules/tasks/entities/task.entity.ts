@@ -1,9 +1,24 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { Label } from '../../labels/entities/label.entity';
+import { TaskLabel } from './task-label.entity';
+import { User } from '../../users/entities/user.entity';
+import { UserTask } from '../../users/entities/user-task.entity';
 
 interface TaskCreationAttrs {
-  value: string;
+  name: string;
   description: string;
+  userId: number;
+  hasDeadline: boolean | null;
+  priority: number | null;
+  repeat: string | null;
+  startDate: Date | null;
 }
 
 @Table({ tableName: 'tasks' })
@@ -40,6 +55,7 @@ export class Task extends Model<Task, TaskCreationAttrs> {
   @ApiProperty({ example: 1, description: 'Task priority' })
   @Column({
     type: DataType.INTEGER,
+    allowNull: true,
   })
   priority: number;
 
@@ -56,4 +72,16 @@ export class Task extends Model<Task, TaskCreationAttrs> {
     allowNull: true,
   })
   startDate: Date;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  userId: number;
+
+  @BelongsToMany(() => Label, () => TaskLabel)
+  labels: Label[];
+
+  @BelongsToMany(() => User, () => UserTask)
+  user: User[];
 }

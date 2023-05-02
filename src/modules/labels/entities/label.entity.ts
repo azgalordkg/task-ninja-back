@@ -1,9 +1,18 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  BelongsToMany,
+} from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../../users/entities/user.entity';
+import { UserLabel } from '../../users/entities/user-label.entity';
 
 interface LabelCreationAttrs {
   name: string;
   color: string;
+  userId: number;
   isDefault?: boolean;
 }
 
@@ -35,4 +44,13 @@ export class Label extends Model<Label, LabelCreationAttrs> {
   @ApiProperty({ example: false, description: 'Label is default' })
   @Column({ defaultValue: false, type: DataType.BOOLEAN, allowNull: true })
   isDefault: boolean;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  userId: number;
+
+  @BelongsToMany(() => User, () => UserLabel)
+  user: User[];
 }

@@ -9,6 +9,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { Label } from './modules/labels/entities/label.entity';
 import { LabelsModule } from './modules/labels/labels.module';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { Task } from './modules/tasks/entities/task.entity';
+import { TaskLabel } from './modules/tasks/entities/task-label.entity';
+import { UserTask } from './modules/users/entities/user-task.entity';
+import { UserLabel } from './modules/users/entities/user-label.entity';
 
 @Module({
   controllers: [],
@@ -33,12 +38,22 @@ import { LabelsModule } from './modules/labels/labels.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, UserRole, Label],
+      models: [
+        User,
+        Role,
+        UserRole,
+        UserTask,
+        UserLabel,
+        Task,
+        Label,
+        TaskLabel,
+      ],
       autoLoadModels: true,
     }),
     UsersModule,
     AuthModule,
     RolesModule,
+    TasksModule,
     LabelsModule,
   ],
 })

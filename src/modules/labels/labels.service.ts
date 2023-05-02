@@ -7,7 +7,7 @@ import { CreateLabelDto } from './dto/create-label.dto';
 export class LabelsService {
   constructor(@InjectModel(Label) private labelsRepository: typeof Label) {}
 
-  async createLabel(dto: CreateLabelDto) {
+  async createLabel(dto: CreateLabelDto, userId: number) {
     const label = await this.labelsRepository.findOne({
       where: { name: dto.name },
     });
@@ -18,11 +18,16 @@ export class LabelsService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return this.labelsRepository.create(dto);
+    const createdLabel = await this.labelsRepository.create({ ...dto, userId });
+    await createdLabel.$set('user', userId);
+
+    return createdLabel;
   }
 
-  async updateLabel(id: number, dto: CreateLabelDto) {
-    const label = await this.labelsRepository.findByPk(id);
+  async updateLabel(id: number, dto: CreateLabelDto, userId: number) {
+    const label = await this.labelsRepository.findOne({
+      where: { id, userId },
+    });
 
     if (!label) {
       throw new HttpException(
@@ -34,8 +39,10 @@ export class LabelsService {
     return await label.update(dto);
   }
 
-  async deleteLabel(id: number) {
-    const label = await this.labelsRepository.findByPk(id);
+  async deleteLabel(id: number, userId: number) {
+    const label = await this.labelsRepository.findOne({
+      where: { id, userId },
+    });
 
     if (!label) {
       throw new HttpException(
@@ -47,9 +54,9 @@ export class LabelsService {
     return await label.destroy();
   }
 
-  async getLabelById(id: number) {
+  async getLabelById(id: number, userId: number) {
     const label = await this.labelsRepository.findOne({
-      where: { id },
+      where: { id, userId },
       include: { all: true },
     });
 
@@ -63,7 +70,7 @@ export class LabelsService {
     return label;
   }
 
-  async getAll() {
-    return await this.labelsRepository.findAll();
+  async getAll(userId: number) {
+    return await this.labelsRepository.findAll({ where: { userId } });
   }
 }
