@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Task } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -26,17 +26,32 @@ export class TasksService {
     });
   }
 
-  async getById(id: number) {
-    return await this.tasksRepository.findByPk(id, { include: { all: true } });
+  async getById(id: number, userId: number) {
+    const task = await this.tasksRepository.findOne({
+      where: { id, userId },
+      include: { all: true },
+    });
+
+    if (!task) {
+      throw new HttpException(
+        'Task with current id not found',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return task;
   }
 
-  async deleteTask(id: number) {
-    const task = await this.getById(id);
-    return await task.destroy();
-  }
+  async updateTask(id: number, dto: CreateTaskDto, userId: number) {
+    const task = await this.getById(id, userId);
 
-  async updateTask(id: number, dto: CreateTaskDto) {
-    const task = await this.getById(id);
+    if (!task) {
+      throw new HttpException(
+        'Task with current id not found',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const { labels, ...data } = dto;
     await task.update(data);
 
@@ -45,5 +60,18 @@ export class TasksService {
     }
 
     return task;
+  }
+
+  async deleteTask(id: number, userId: number) {
+    const task = await this.getById(id, userId);
+
+    if (!task) {
+      throw new HttpException(
+        'Task with current id not found',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return await task.destroy();
   }
 }

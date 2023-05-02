@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
 import { Task } from './entities/task.entity';
@@ -29,5 +38,36 @@ export class TasksController {
   @Get()
   getAll(@UserDecorator() user: User) {
     return this.tasksService.getAll(user.id);
+  }
+
+  @ApiOperation({ summary: 'Tasks by id' })
+  @ApiResponse({ status: 200, type: Task })
+  @RolesDecorator('USER')
+  @UseGuards(RolesAuthGuard)
+  @Get('/:id')
+  getById(@Param('id') id: number, @UserDecorator() user: User) {
+    return this.tasksService.getById(id, user.id);
+  }
+
+  @ApiOperation({ summary: 'Update Task' })
+  @ApiResponse({ status: 200, type: Task })
+  @RolesDecorator('USER')
+  @UseGuards(RolesAuthGuard)
+  @Put('/:id')
+  updateTask(
+    @Param('id') id: number,
+    @Body() dto: CreateTaskDto,
+    @UserDecorator() user: User,
+  ) {
+    return this.tasksService.updateTask(id, dto, user.id);
+  }
+
+  @ApiOperation({ summary: 'Delete Task' })
+  @ApiResponse({ status: 200, type: Task })
+  @RolesDecorator('USER')
+  @UseGuards(RolesAuthGuard)
+  @Delete('/:id')
+  deleteTask(@Param('id') id: number, @UserDecorator() user: User) {
+    return this.tasksService.deleteTask(id, user.id);
   }
 }
