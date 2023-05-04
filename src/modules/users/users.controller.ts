@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
-import { RolesDecorator } from '../auth/role-auth.decorator';
+import { RolesDecorator } from '../../decorators/role-auth.decorator';
 import { RolesAuthGuard } from '../auth/roles-auth.guard';
 
 @ApiTags('Users')
