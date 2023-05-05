@@ -64,6 +64,15 @@ export class AuthService {
     return this.generateToken(user);
   }
 
+  async getUserInfo(id: number) {
+    console.log(id);
+    const user = await this.usersService.getById(id);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  }
+
   async createAdminUser() {
     const adminRoleName = 'ADMIN';
 
