@@ -30,12 +30,15 @@ export class AuthService {
       userDto.password,
       user.password,
     );
-    if (user && passwordEquals) {
-      return user;
+    if (!user) {
+      throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
-    throw new UnauthorizedException({
-      message: 'Email or password is not correct',
-    });
+    if (!passwordEquals) {
+      throw new UnauthorizedException({
+        message: 'INVALID_EMAIL_OR_PASSWORD',
+      });
+    }
+    return user;
   }
 
   async login(dto: CreateUserDto) {
@@ -46,10 +49,7 @@ export class AuthService {
   async registration(userDto: CreateUserDto, role?: string) {
     const candidate = await this.usersService.getByEmail(userDto.email);
     if (candidate) {
-      throw new HttpException(
-        'User is already registered',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('USER_ALREADY_EXISTS', HttpStatus.BAD_REQUEST);
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5);
@@ -65,10 +65,9 @@ export class AuthService {
   }
 
   async getUserInfo(id: number) {
-    console.log(id);
     const user = await this.usersService.getById(id);
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
     return user;
   }
