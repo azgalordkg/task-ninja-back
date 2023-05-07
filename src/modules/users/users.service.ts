@@ -37,6 +37,9 @@ export class UsersService {
   async getById(id: number) {
     return await this.usersRepository.findOne({
       where: { id },
+      attributes: {
+        exclude: ['password'],
+      },
       include: { all: true },
     });
   }
