@@ -26,13 +26,14 @@ export class AuthService {
 
   private async validateService(userDto: CreateUserDto) {
     const user = await this.usersService.getByEmail(userDto.email);
+    if (!user) {
+      throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
     const passwordEquals = await bcrypt.compare(
       userDto.password,
       user.password,
     );
-    if (!user) {
-      throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
-    }
     if (!passwordEquals) {
       throw new UnauthorizedException({
         message: 'INVALID_EMAIL_OR_PASSWORD',
