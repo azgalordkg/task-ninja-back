@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -7,6 +7,7 @@ import { UserDecorator } from '../../decorators/user.decorator';
 import { User } from '../users/entities/user.entity';
 import { RolesDecorator } from '../../decorators/role-auth.decorator';
 import { RolesAuthGuard } from './roles-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -34,5 +35,16 @@ export class AuthController {
   @Get('/me')
   getUserById(@UserDecorator() user: User) {
     return this.authService.getUserInfo(user.id);
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async googleAuth(@Req() req) {}
+
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req) {
+    return this.authService.googleLogin(req);
   }
 }

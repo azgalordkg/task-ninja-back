@@ -14,6 +14,7 @@ import { Task } from './modules/tasks/entities/task.entity';
 import { TaskLabel } from './modules/tasks/entities/task-label.entity';
 import { UserTask } from './modules/users/entities/user-task.entity';
 import { UserLabel } from './modules/users/entities/user-label.entity';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   controllers: [],
@@ -55,6 +56,7 @@ import { UserLabel } from './modules/users/entities/user-label.entity';
     RolesModule,
     TasksModule,
     LabelsModule,
+    PassportModule,
   ],
 })
 export class AppModule {}
