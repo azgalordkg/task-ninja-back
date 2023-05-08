@@ -7,6 +7,7 @@ import { UserDecorator } from '../../decorators/user.decorator';
 import { User } from '../users/entities/user.entity';
 import { RolesDecorator } from '../../decorators/role-auth.decorator';
 import { RolesAuthGuard } from './roles-auth.guard';
+import { GoogleRegisterDto } from './dto/google-register.dto';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -34,5 +35,12 @@ export class AuthController {
   @Get('/me')
   getUserById(@UserDecorator() user: User) {
     return this.authService.getUserInfo(user.id);
+  }
+
+  @ApiOperation({ summary: 'Google Registration' })
+  @ApiResponse({ status: 200, type: Auth })
+  @Post('/google')
+  async signInWithGoogle(@Body() { token }: GoogleRegisterDto) {
+    return await this.authService.registerWithGoogle(token);
   }
 }

@@ -38,9 +38,16 @@ export class User extends Model<User, UserCreationAttrs> {
   @ApiProperty({ example: 'Password_007', description: 'Password of user' })
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   password: string;
+
+  @ApiProperty({ example: true, description: 'Is user google' })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  isGoogle: boolean;
 
   @BelongsToMany(() => Role, () => UserRole)
   roles: Role[];
