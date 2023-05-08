@@ -9,13 +9,19 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
+  private readonly googleClient: OAuth2Client;
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) {
+    const clientId = process.env.GOOGLE_CLIENT_ID || 'GOOGLE_CLIENT_ID';
+    this.googleClient = new OAuth2Client(clientId);
+  }
 
   private async generateToken(user: User) {
     const payload = { email: user.email, id: user.id, roles: user.roles };
@@ -40,6 +46,18 @@ export class AuthService {
       });
     }
     return user;
+  }
+
+  private async verifyToken(token: string) {
+    try {
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: token,
+        audience: this.googleClient._clientId,
+      });
+      return ticket.getPayload();
+    } catch (error) {
+      throw new HttpException('GOOGLE_AUTH_ERROR', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async login(dto: CreateUserDto) {
@@ -90,5 +108,20 @@ export class AuthService {
         adminRoleName,
       );
     }
+  }
+
+  async registerWithGoogle(token: string) {
+    const googleAccountInfo = await this.verifyToken(token);
+    const { email } = googleAccountInfo;
+    let user = await this.usersService.getByEmail(email);
+
+    if (!user) {
+      user = await this.usersService.createGoogleUser({
+        email,
+        isGoogle: true,
+      });
+    }
+
+    return this.generateToken(user);
   }
 }

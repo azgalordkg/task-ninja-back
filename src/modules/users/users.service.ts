@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from '../roles/roles.service';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,14 @@ export class UsersService {
     }
     const newUser = await this.usersRepository.create(dto);
     const role = await this.rolesService.getRoleByValue(roleName || 'USER');
+    await newUser.$set('roles', [role.id]);
+    newUser.roles = [role];
+    return newUser;
+  }
+
+  async createGoogleUser(dto: CreateGoogleUserDto) {
+    const newUser = await this.usersRepository.create(dto);
+    const role = await this.rolesService.getRoleByValue('USER');
     await newUser.$set('roles', [role.id]);
     newUser.roles = [role];
     return newUser;
