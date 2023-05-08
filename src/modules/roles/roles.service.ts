@@ -27,4 +27,16 @@ export class RolesService {
   async getAll() {
     return await this.rolesRepository.findAll();
   }
+
+  async createUserRole() {
+    const userRole = 'USER';
+    const role = this.getRoleByValue(userRole);
+
+    if (!role) {
+      await this.createRole({
+        value: 'USER',
+        description: 'User role',
+      });
+    }
+  }
 }
