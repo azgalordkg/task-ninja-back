@@ -60,14 +60,24 @@ export class UsersService {
     });
   }
 
-  async createAdminRole() {
+  async createAdminAndUserRoles() {
     const adminRoleName = 'ADMIN';
+    const userRoleName = 'USER';
+
     const adminRole = await this.rolesService.getRoleByValue(adminRoleName);
+    const userRole = await this.rolesService.getRoleByValue(userRoleName);
 
     if (!adminRole) {
       await this.rolesService.createRole({
         value: adminRoleName,
         description: 'Administrator role',
+      });
+    }
+
+    if (!userRole) {
+      await this.rolesService.createRole({
+        value: userRoleName,
+        description: 'User role',
       });
     }
   }
