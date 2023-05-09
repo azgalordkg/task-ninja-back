@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from '../roles/roles.service';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto';
+import { EditUserDto } from './dto/edit-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,11 +23,35 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
     const newUser = await this.usersRepository.create(dto);
     const role = await this.rolesService.getRoleByValue(roleName || 'USER');
     await newUser.$set('roles', [role.id]);
     newUser.roles = [role];
     return newUser;
+  }
+
+  async editUser(dto: EditUserDto, userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return await user.update(dto);
+  }
+
+  async deleteUser(userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    await user.destroy();
+    return new HttpException('User deleted successfully', HttpStatus.OK);
   }
 
   async createGoogleUser(dto: CreateGoogleUserDto) {
