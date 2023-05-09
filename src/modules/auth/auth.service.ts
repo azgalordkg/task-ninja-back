@@ -71,11 +71,13 @@ export class AuthService {
       throw new HttpException('USER_ALREADY_EXISTS', HttpStatus.BAD_REQUEST);
     }
 
+    const name = userDto?.fullname || userDto?.email.split('@')[0];
     const hashPassword = await bcrypt.hash(userDto.password, 5);
     const user = await this.usersService.createUser(
       {
         ...userDto,
         password: hashPassword,
+        fullname: name,
       },
       role,
     );
@@ -112,13 +114,14 @@ export class AuthService {
 
   async registerWithGoogle(token: string) {
     const googleAccountInfo = await this.verifyToken(token);
-    const { email } = googleAccountInfo;
+    const { email, family_name, name } = googleAccountInfo;
     let user = await this.usersService.getByEmail(email);
 
     if (!user) {
       user = await this.usersService.createGoogleUser({
         email,
         isGoogle: true,
+        fullname: `${name} ${family_name}`,
       });
     }
 

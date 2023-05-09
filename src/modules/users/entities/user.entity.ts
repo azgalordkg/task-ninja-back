@@ -14,6 +14,7 @@ import { UserTask } from './user-task.entity';
 interface UserCreationAttrs {
   email: string;
   password: string;
+  fullname?: string;
 }
 
 @Table({ tableName: 'users' })
@@ -48,6 +49,13 @@ export class User extends Model<User, UserCreationAttrs> {
     allowNull: true,
   })
   isGoogle: boolean;
+
+  @ApiProperty({ example: 'John Doe', description: 'User full name' })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  fullname: string;
 
   @BelongsToMany(() => Role, () => UserRole)
   roles: Role[];

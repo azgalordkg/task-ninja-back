@@ -9,4 +9,7 @@ export class CreateGoogleUserDto {
   @ApiProperty({ example: true, description: 'Is Google Account' })
   @IsBoolean({ message: 'Must be a boolean' })
   readonly isGoogle: boolean;
+
+  @ApiProperty({ example: 'John Doe', description: 'User full name' })
+  fullname?: string;
 }
