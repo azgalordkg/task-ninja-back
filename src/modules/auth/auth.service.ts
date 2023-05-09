@@ -114,14 +114,14 @@ export class AuthService {
 
   async registerWithGoogle(token: string) {
     const googleAccountInfo = await this.verifyToken(token);
-    const { email, family_name, name } = googleAccountInfo;
+    const { email, name } = googleAccountInfo;
     let user = await this.usersService.getByEmail(email);
 
     if (!user) {
       user = await this.usersService.createGoogleUser({
         email,
         isGoogle: true,
-        fullname: `${name} ${family_name}`,
+        fullname: `${name}`,
       });
     }
 
