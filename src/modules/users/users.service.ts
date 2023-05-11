@@ -24,7 +24,10 @@ export class UsersService {
       );
     }
 
-    const newUser = await this.usersRepository.create(dto);
+    const newUser = await this.usersRepository.create({
+      ...dto,
+      withPassword: true,
+    });
     const role = await this.rolesService.getRoleByValue(roleName || 'USER');
     await newUser.$set('roles', [role.id]);
     newUser.roles = [role];
@@ -55,7 +58,10 @@ export class UsersService {
   }
 
   async createGoogleUser(dto: CreateGoogleUserDto) {
-    const newUser = await this.usersRepository.create(dto);
+    const newUser = await this.usersRepository.create({
+      ...dto,
+      withPassword: false,
+    });
     const role = await this.rolesService.getRoleByValue('USER');
     await newUser.$set('roles', [role.id]);
     newUser.roles = [role];

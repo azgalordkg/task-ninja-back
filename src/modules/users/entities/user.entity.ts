@@ -15,6 +15,7 @@ interface UserCreationAttrs {
   email: string;
   password: string;
   fullname?: string;
+  withPassword?: boolean;
 }
 
 @Table({ tableName: 'users' })
@@ -56,6 +57,13 @@ export class User extends Model<User, UserCreationAttrs> {
     allowNull: true,
   })
   fullname: string;
+
+  @ApiProperty({ example: true, description: 'If user has password' })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  withPassword: boolean;
 
   @BelongsToMany(() => Role, () => UserRole)
   roles: Role[];
