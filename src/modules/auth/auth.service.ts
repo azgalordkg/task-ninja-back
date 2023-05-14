@@ -85,6 +85,52 @@ export class AuthService {
     return this.generateToken(user);
   }
 
+  async setPassword(userId: number, password: string) {
+    try {
+      const hashPassword = await bcrypt.hash(password, 5);
+      await this.usersService.editUser(
+        {
+          password: hashPassword,
+        },
+        userId,
+      );
+      return new HttpException('PASSWORD_ADDED', HttpStatus.OK);
+    } catch (error) {
+      throw new HttpException('PASSWORD_NOT_ADDED', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async changePassword(
+    userId: number,
+    oldPassword: string,
+    newPassword: string,
+  ) {
+    try {
+      const user = await this.usersService.getById(userId);
+      if (!user) {
+        throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
+      }
+
+      const passwordEquals = await bcrypt.compare(oldPassword, user.password);
+      if (!passwordEquals) {
+        throw new UnauthorizedException({
+          message: 'INVALID_PASSWORD',
+        });
+      }
+
+      const hashPassword = await bcrypt.hash(newPassword, 5);
+      await this.usersService.editUser(
+        {
+          password: hashPassword,
+        },
+        userId,
+      );
+      return new HttpException('PASSWORD_CHANGED', HttpStatus.OK);
+    } catch (error) {
+      throw new HttpException('PASSWORD_NOT_CHANGED', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async getUserInfo(id: number) {
     const user = await this.usersService.getById(id);
     if (!user) {

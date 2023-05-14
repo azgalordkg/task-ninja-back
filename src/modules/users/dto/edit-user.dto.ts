@@ -9,4 +9,16 @@ export class EditUserDto {
 
   @ApiPropertyOptional({ example: 'John Doe', description: 'User full name' })
   fullname?: string;
+
+  @ApiPropertyOptional({
+    example: 'Password_007',
+    description: 'User password',
+  })
+  password?: string;
+
+  @ApiPropertyOptional({
+    example: 'Password_007',
+    description: 'User password',
+  })
+  oldPassword?: string;
 }

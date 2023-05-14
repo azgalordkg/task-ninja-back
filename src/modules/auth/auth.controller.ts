@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -8,6 +15,7 @@ import { User } from '../users/entities/user.entity';
 import { RolesDecorator } from '../../decorators/role-auth.decorator';
 import { RolesAuthGuard } from './roles-auth.guard';
 import { GoogleRegisterDto } from './dto/google-register.dto';
+import { EditUserDto } from '../users/dto/edit-user.dto';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -26,6 +34,28 @@ export class AuthController {
   @Post('/register')
   register(@Body() dto: CreateUserDto) {
     return this.authService.registration(dto);
+  }
+
+  @ApiOperation({ summary: 'Set Password' })
+  @ApiResponse({ status: 200, type: HttpException })
+  @RolesDecorator('USER')
+  @UseGuards(RolesAuthGuard)
+  @Post('/password/set')
+  setPassword(@Body() dto: EditUserDto, @UserDecorator() user: User) {
+    return this.authService.setPassword(user.id, dto.password);
+  }
+
+  @ApiOperation({ summary: 'Change Password' })
+  @ApiResponse({ status: 200, type: HttpException })
+  @RolesDecorator('USER')
+  @UseGuards(RolesAuthGuard)
+  @Post('/password/change')
+  changePassword(@Body() dto: EditUserDto, @UserDecorator() user: User) {
+    return this.authService.changePassword(
+      user.id,
+      dto.oldPassword,
+      dto.password,
+    );
   }
 
   @ApiOperation({ summary: 'Get Me' })
