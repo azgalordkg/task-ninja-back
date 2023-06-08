@@ -74,12 +74,14 @@ export class UsersService {
     });
   }
 
-  async getById(id: number) {
+  async getById(id: number, withPassword = false) {
     return await this.usersRepository.findOne({
       where: { id },
-      attributes: {
-        exclude: ['password'],
-      },
+      attributes: withPassword
+        ? undefined
+        : {
+            exclude: ['password'],
+          },
       include: { all: true },
     });
   }

@@ -107,7 +107,7 @@ export class AuthService {
     newPassword: string,
   ) {
     try {
-      const user = await this.usersService.getById(userId);
+      const user = await this.usersService.getById(userId, true);
       if (!user) {
         throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
       }
