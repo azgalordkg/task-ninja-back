@@ -4,7 +4,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from './pipes/validation.pipe';
 import { AuthService } from './modules/auth/auth.service';
 import { UsersService } from './modules/users/users.service';
-import cors from 'cors';
 
 async function start() {
   const PORT = process.env.PORT || 8008;
@@ -15,8 +14,6 @@ async function start() {
 
   await usersInitService.createAdminAndUserRoles();
   await authInitService.createAdminUser();
-
-  app.use(cors());
 
   const config = new DocumentBuilder()
     .setTitle('Task Ninja')
