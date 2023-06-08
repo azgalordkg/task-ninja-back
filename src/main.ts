@@ -9,6 +9,15 @@ async function start() {
   const PORT = process.env.PORT || 8008;
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://task-ninja-back.herokuapp.com',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   const authInitService = app.get(AuthService);
   const usersInitService = app.get(UsersService);
 
