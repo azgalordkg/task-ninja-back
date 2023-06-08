@@ -10,10 +10,7 @@ async function start() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://task-ninja-back.herokuapp.com',
-    ],
+    origin: ['http://localhost:3000', 'https://task-ninja-back.herokuapp.com'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
