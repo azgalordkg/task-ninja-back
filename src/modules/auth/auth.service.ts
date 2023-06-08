@@ -91,6 +91,7 @@ export class AuthService {
       await this.usersService.editUser(
         {
           password: hashPassword,
+          withPassword: true,
         },
         userId,
       );

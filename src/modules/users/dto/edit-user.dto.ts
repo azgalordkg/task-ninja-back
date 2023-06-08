@@ -21,4 +21,10 @@ export class EditUserDto {
     description: 'User password',
   })
   oldPassword?: string;
+
+  @ApiPropertyOptional({
+    example: true,
+    description: 'User password',
+  })
+  withPassword?: boolean;
 }
