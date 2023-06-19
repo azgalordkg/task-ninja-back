@@ -8,7 +8,7 @@ import {
 import { User } from './user.entity';
 import { Task } from '../../tasks/entities/task.entity';
 
-@Table({ tableName: 'user_task', createdAt: false, updatedAt: false })
+@Table({ tableName: 'user_tasks', createdAt: false, updatedAt: false })
 export class UserTask extends Model<UserTask> {
   @Column({
     type: DataType.INTEGER,

@@ -10,6 +10,8 @@ import { Role } from '../../roles/entities/role.entity';
 import { UserRole } from './user-role.entity';
 import { Task } from '../../tasks/entities/task.entity';
 import { UserTask } from './user-task.entity';
+import { Label } from '../../labels/entities/label.entity';
+import { UserLabel } from './user-label.entity';
 
 interface UserCreationAttrs {
   email: string;
@@ -70,4 +72,7 @@ export class User extends Model<User, UserCreationAttrs> {
 
   @BelongsToMany(() => Task, () => UserTask)
   tasks: Task[];
+
+  @BelongsToMany(() => Label, () => UserLabel)
+  labels: Label[];
 }

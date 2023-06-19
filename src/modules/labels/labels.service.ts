@@ -18,10 +18,7 @@ export class LabelsService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const createdLabel = await this.labelsRepository.create({ ...dto, userId });
-    await createdLabel.$set('user', userId);
-
-    return createdLabel;
+    return await this.labelsRepository.create({ ...dto, userId });
   }
 
   async updateLabel(id: number, dto: CreateLabelDto, userId: number) {

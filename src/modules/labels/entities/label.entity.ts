@@ -52,5 +52,5 @@ export class Label extends Model<Label, LabelCreationAttrs> {
   userId: number;
 
   @BelongsToMany(() => User, () => UserLabel)
-  user: User[];
+  users: User[];
 }
